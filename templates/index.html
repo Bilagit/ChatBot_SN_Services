@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Sénégal Services</title>
+    <link rel="shortcut icon" href="https://senegalservices.sn/_nuxt/icons/icon_64x64.b8a9e9.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <style>
+        #chatbot-container {
+        position:fixed;
+        height: 600px;
+        
+        bottom: 100px;
+        right: 20px;
+        width: 400px;
+        
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: none;
+        padding: 20px;
+        }
+
+        #list-group{
+            /* position: relative; */
+            max-height: 450px;
+            
+        }
+        
+        #chatbot-container.open {
+        display: block;
+        }
+        
+        #chatbot-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background-color: #dc3545;
+        border-radius: 50%;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        }
+        
+        #list-group{
+            overflow-y: auto;
+        }
+
+        #chatbot-toggle.closed {
+        background-color: #007bff;
+        }
+        #chatbot-toggle:hover{
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .16) !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbot-container">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" style="font-family: Arial, Helvetica, sans-serif; margin-left: 10px;">ChatBot Sénégal Services</a>
+
+            </div>
+        </nav>
+        <div> 
+            <div id="list-group" class="list-group w-auto">
+                <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                  <img src="https://img.icons8.com/?size=512&id=mi1244VYhYl6&format=png" alt="user icon" width="32" height="32" class="rounded-circle flex-shrink-0">
+                  <div class="d-flex gap-3 w-100 justify-content-between">
+                    <div>
+                      <p class="mb-0 opacity-75">Bonjour, comment puis-je vous aider aujourdhui ?</p>
+                    </div>
+                  </div>
+                </a>
+            </div>
+          </div>
+          <div id="input-for-submit" class="input-group mb-3" style="margin-top: 10px;">
+            <input type="text" class="form-control" id="chat-input" placeholder="Saisir votre question">
+            <div class="input-group-append">
+            <button id="gpt-button" class="btn btn-primary">Envoyer</button>
+          </div>
+        </div>
+        
+  </div>
+  <!-- Bouton pour ouvrir/fermer le chatbot -->
+  <div id="chatbot-toggle" class="closed">
+    <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+        <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+        <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+      </svg>
+    <svg style="display: none;" id="close-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+    </svg>  
+  </div>
+
+  <script>
+      $('#chatbot-toggle').click(function() {
+        if ($('#chatbot-container').hasClass('open')) {
+          $('#chatbot-container').removeClass('open');
+          $('#chatbot-toggle').addClass('closed');
+          $('#close-icon').css('display', 'none');
+          $('#chat-icon').css('display', 'block');
+        } else {
+          $('#chatbot-container').addClass('open');
+          $('#chatbot-toggle').removeClass('closed');
+          $('#chat-icon').css('display', 'none');
+          $('#close-icon').css('display', 'block');
+        }
+      });
+    $("#gpt-button").click(function(){
+            var question = $("#chat-input").val();
+            if (question.trim() === "") {
+                return;
+            }
+            else{
+                let html_data = "";
+                html_data += `<a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                  <img src="https://img.icons8.com/?size=512&id=98957&format=png" alt="user icon" width="32" height="32" class="rounded-circle flex-shrink-0">
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                        <div>
+                        <p class="mb-0 opacity-75">${question}</p>
+                        </div>
+                    </div>
+                    </a>
+                `
+                let load_response = "";
+                load_response +=`<a id="load-response" href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3"><img src="https://img.icons8.com/?size=512&id=mi1244VYhYl6&format=png" alt="bot icon" width="32" height="32" class="rounded-circle flex-shrink-0"><div class="d-flex gap-2 w-100 justify-content-between"><div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+                </div></div></a>`
+                $("#chat-input").val('');
+                $("#list-group").append(html_data);
+                $("#list-group").append(load_response);
+                $("#gpt-button").prop("disabled", true);
+
+                // AJAX 
+                $.ajax({
+                    type: "POST",
+                    url: "/",
+                    data: {'prompt': question},
+                    success: function(data) {
+                        let chatbot_response = "";
+                        chatbot_response += `<a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-3">
+                        <img src="https://img.icons8.com/?size=512&id=mi1244VYhYl6&format=png" alt="bot icon" width="32" height="32" class="rounded-circle flex-shrink-0">
+                        <div class="d-flex gap-2 w-100 justify-content-between">
+                        <div>
+                        <p class="mb-0 opacity-75">${data.answer}</p>
+                        </div>
+                        </div>
+                        </a>
+                        `
+                        $("#load-response").remove()
+                        $("#list-group").append(chatbot_response);
+                        $("#gpt-button").prop("disabled", false);
+                    }
+                });
+            }
+        });
+  </script>
+</body>
+</html>
